@@ -15,7 +15,7 @@
   // window.DisableAnimatedMan = "true";   // 关闭动画人物插图
   window.CustomDesc = "稳定求签";       // 自定义描述
   window.CustomIllustration = 'https://s2.loli.net/2024/12/24/fj3EXY7umsyR9NW.webp'; /* 把基佬图换成你想换的图, 此处图抄袭自 https://misaka.se/ */
-  window.CustomLinks = '[{\"link\":\"https://uptime.loadke.tech/\",\"name\":\"UPTime\"}]'; /* 自定义导航栏链接 */
+  window.CustomLinks = '[{\"link\":\"https://blog.loadke.tech/\",\"name\":\"Blog\"}]'; /* 自定义导航栏链接 */
   window.ForceTheme = 'light'; /* 强制主题色, 可选值为 light 或 dark */ 
 </script>
 <script src="https://cdn.jsdelivr.net/gh/IonRh/nezha-ui@main/netstatus-autoshow.js"></script>
