@@ -3,11 +3,8 @@
 ###### 自用的探针更改 
 ```html
 <meta name="referrer" content="no-referrer">
-/* 自用的css格式 */
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/IonRh/nezha-ui@main/nezha-style.css">
-/* 自用的探针修改 */
 <script>
-  /* 自定义字体 */
   var link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = 'https://font.sec.miui.com/font/css?family=MiSans:400,700:MiSans'; // MiSans
