@@ -21,6 +21,8 @@
   window.CustomLinks = '[{\"link\":\"https://uptime.loadke.tech/\",\"name\":\"UPTime\"}]'; /* 自定义导航栏链接 */
   window.ForceTheme = 'light'; /* 强制主题色, 可选值为 light 或 dark */ 
 </script>
+<script src="https://cdn.jsdelivr.net/gh/IonRh/nezha-ui@main/netstatus-autoshow.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/IonRh/nezha-ui@main/traffic-progress.js"></script>
 ```
 ###### 周期性流量进度条 
 ```html
