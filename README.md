@@ -7,14 +7,19 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/IonRh/nezha-ui@main/nezha-style.css">
 /* 自用的探针修改 */
 <script>
-    window.CustomBackgroundImage = "https://bing.img.run/rand_uhd.php"; /* 页面背景图 */
-    window.CustomMobileBackgroundImage = "https://bing.img.run/rand_m.php"; /* 移动端页面背景图 */
-    /* 卡片显示上下行流量 */
-    // window.ShowNetTransfer = "true";
-    /* 关掉人物插图 */
-    window.DisableAnimatedMan = "true";
-    /* 自定义描述 */
-    window.CustomDesc = "v2.games";
+  /* 自定义字体 */
+  var link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'https://font.sec.miui.com/font/css?family=MiSans:400,700:MiSans'; // MiSans
+  document.head.appendChild(link);
+  /* ==================== 全局配置 ==================== */
+  window.ShowNetTransfer = "true";      // 卡片显示上下行流量
+  window.CustomLogo = '/apple-touch-icon.png'; /* 页面左上角和标题栏展示的 Logo, 换成你自己的 */
+  // window.DisableAnimatedMan = "true";   // 关闭动画人物插图
+  window.CustomDesc = "稳定求签";       // 自定义描述
+  window.CustomIllustration = 'https://s2.loli.net/2024/12/24/fj3EXY7umsyR9NW.webp'; /* 把基佬图换成你想换的图, 此处图抄袭自 https://misaka.se/ */
+  window.CustomLinks = '[{\"link\":\"https://uptime.loadke.tech/\",\"name\":\"UPTime\"}]'; /* 自定义导航栏链接 */
+  window.ForceTheme = 'light'; /* 强制主题色, 可选值为 light 或 dark */ 
 </script>
 ```
 ###### 周期性流量进度条 

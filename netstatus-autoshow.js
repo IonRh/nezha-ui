@@ -7,6 +7,20 @@
 (function () {
     'use strict';
 
+    function injectResponsiveStyle() {
+        const style = document.createElement('style');
+        style.textContent = `
+            @media (min-width: 40rem) {
+                .sm\\:-mt-5 {
+                    margin-top: calc(var(--spacing) * -1) !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    injectResponsiveStyle();
+
     // "网络" 按钮选择器：未激活状态下的 Tab 按钮（灰色文字）
     const selectorNetworkButton = '.server-info-tab .relative.cursor-pointer.text-stone-400.dark\\:text-stone-500';
 

@@ -2,7 +2,9 @@ const SCRIPT_VERSION = 'v20250617';
 // == 样式注入模块 ==
 // 注入自定义CSS隐藏特定元素
 function injectCustomCSS() {
+  if (document.getElementById('traffic-progress-custom-style')) return;
   const style = document.createElement('style');
+  style.id = 'traffic-progress-custom-style';
   style.textContent = `
     /* 隐藏父级类名为 mt-4 w-full mx-auto 下的所有 div */
     .mt-4.w-full.mx-auto > div {
@@ -44,12 +46,15 @@ const utils = (() => {
   function calculatePercentage(used, total) {
     used = Number(used);
     total = Number(total);
+    if (!Number.isFinite(used) || !Number.isFinite(total) || total <= 0) {
+      return '0.00';
+    }
     // 大数缩放，防止数值溢出
     if (used > 1e15 || total > 1e15) {
       used /= 1e10;
       total /= 1e10;
     }
-    return total === 0 ? '0.00' : ((used / total) * 100).toFixed(2);
+    return ((used / total) * 100).toFixed(2);
   }
 
   /**
@@ -137,6 +142,7 @@ const utils = (() => {
 // == 流量统计渲染模块 ==
 const trafficRenderer = (() => {
   const toggleElements = [];  // 存储需周期切换显示的元素及其内容
+  let toggleTimer = null;
 
   /**
    * 渲染流量统计条目
@@ -144,6 +150,7 @@ const trafficRenderer = (() => {
    * @param {Object} config - 配置项
    */
   function renderTrafficStats(trafficData, config) {
+    if (!trafficData || typeof trafficData !== 'object') return;
     const serverMap = new Map();
 
     // 解析流量数据，按服务器名聚合
@@ -291,22 +298,38 @@ const trafficRenderer = (() => {
    * @param {number} duration - 动画时长，毫秒
    */
   function startToggleCycle(toggleInterval, duration) {
+    if (toggleTimer) {
+      clearInterval(toggleTimer);
+      toggleTimer = null;
+    }
     if (toggleInterval <= 0) return;
     let toggleIndex = 0;
 
-    setInterval(() => {
+    toggleTimer = setInterval(() => {
       toggleIndex++;
-      toggleElements.forEach(({ el, contents }) => {
-        if (!document.body.contains(el)) return;
-        const index = toggleIndex % contents.length;
-        utils.fadeOutIn(el, contents[index], duration);
-      });
+      for (let index = toggleElements.length - 1; index >= 0; index--) {
+        const { el, contents } = toggleElements[index];
+        if (!document.body.contains(el)) {
+          toggleElements.splice(index, 1);
+          continue;
+        }
+        const contentIndex = toggleIndex % contents.length;
+        utils.fadeOutIn(el, contents[contentIndex], duration);
+      }
     }, toggleInterval);
+  }
+
+  function stopToggleCycle() {
+    if (toggleTimer) {
+      clearInterval(toggleTimer);
+      toggleTimer = null;
+    }
   }
 
   return {
     renderTrafficStats,
-    startToggleCycle
+    startToggleCycle,
+    stopToggleCycle
   };
 })();
 
@@ -437,7 +460,7 @@ const domObserver = (() => {
     enableLog: false
   };
   // 合并用户自定义配置
-  const config = Object.assign({}, defaultConfig, window.TrafficScriptConfig || {});
+  let config = Object.assign({}, defaultConfig, window.TrafficScriptConfig || {});
   if (config.enableLog) {
     console.log(`[TrafficScript] 版本: ${SCRIPT_VERSION}`);
     console.log('[TrafficScript] 最终配置如下:', config);
@@ -475,6 +498,14 @@ const domObserver = (() => {
     }
   }
 
+  function restartPeriodicRefresh() {
+    if (trafficTimer) {
+      clearInterval(trafficTimer);
+      trafficTimer = null;
+    }
+    startPeriodicRefresh();
+  }
+
   // 启动内容切换轮播（如时间、百分比）
   trafficRenderer.startToggleCycle(config.toggleInterval, config.duration);
   // 监听section变化及其子节点变化
@@ -490,7 +521,7 @@ const domObserver = (() => {
       if (config.enableLog) console.log('[main] 100ms后检测到新配置，更新配置并重启任务');
       config = newConfig;
       // 重新启动周期刷新任务
-      startPeriodicRefresh();
+      restartPeriodicRefresh();
       // 重新启动内容切换轮播（传入新配置）
       trafficRenderer.startToggleCycle(config.toggleInterval, config.duration);
       // 立即刷新数据
@@ -502,6 +533,7 @@ const domObserver = (() => {
   // 页面卸载时清理监听和定时器
   window.addEventListener('beforeunload', () => {
     domObserver.disconnectAll(sectionDetector);
+    trafficRenderer.stopToggleCycle();
     if (trafficTimer) clearInterval(trafficTimer);
   });
 })();
